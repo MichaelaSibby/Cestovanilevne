@@ -2,44 +2,104 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8" />
-  <title>Cestovanilevne - Vyber města a zobraz ceny</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cestovaní Levně</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: #f9f9f9; }
-    h1 { color: #004080; text-align: center; }
-    select, button { font-size: 1.1em; padding: 8px; margin-top: 10px; width: 100%; }
-    .result { margin-top: 20px; background: #d9e6f2; padding: 15px; border-radius: 8px; font-size: 1.1em; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #ccc;
+      max-width: 500px;
+    }
   </style>
 </head>
 <body>
-  <h1>Cestovanilevne</h1>
-  <label for="citySelect">Vyberte město:</label>
-  <select id="citySelect">
-    <option value="">-- Vyberte město --</option>
-    <option value="praha">Praha, Česká republika</option>
-    <option value="pariz">Paříž, Francie</option>
-    <option value="londyn">Londýn, Velká Británie</option>
-    <option value="newyork">New York, USA</option>
-    <option value="tokio">Tokio, Japonsko</option>
-    <option value="rim">Řím, Itálie</option>
-    <option value="barcelona">Barcelona, Španělsko</option>
-    <option value="sydney">Sydney, Austrálie</option>
-    <option value="sanghai">Šanghaj, Čína</option>
-    <option value="riodejaneiro">Rio de Janeiro, Brazílie</option>
-    <!-- přidej další města podle potřeby -->
-  </select>
-  <button id="showBtn">Zobrazit ceny</button>
+  <h1>Cestovaní Levně 🌍</h1>
+  <p>Vyber město a zjisti orientační ceny:</p>
 
-  <div class="result" id="resultBox">Vyberte město a klikněte na "Zobrazit ceny".</div>
+  <select id="citySelect">
+    <option value="">-- Vyber město --</option>
+    <option value="prague">Praha, Česko</option>
+    <option value="bangkok">Bangkok, Thajsko</option>
+    <option value="lisbon">Lisabon, Portugalsko</option>
+    <option value="tokyo">Tokio, Japonsko</option>
+    <option value="newyork">New York, USA</option>
+    <!-- sem můžeme přidat stovky dalších měst -->
+  </select>
+  <br>
+  <button onclick="showPrices()">Zobrazit ceny</button>
+
+  <div class="card" id="priceCard" style="display:none;">
+    <h2 id="cityTitle"></h2>
+    <p><strong>Jídlo (restaurace):</strong> <span id="foodPrice"></span></p>
+    <p><strong>Doprava (MHD/jízdenka):</strong> <span id="transportPrice"></span></p>
+    <p><strong>Ubytování (noc v hotelu):</strong> <span id="hotelPrice"></span></p>
+    <p><strong>Zábava:</strong> <span id="funPrice"></span></p>
+  </div>
 
   <script>
-    const pricesData = {
-      praha: {
-        zeme: "Česká republika",
-        doprava: "500 Kč",
-        ubytovani: "900 Kč / noc",
-        jidlo: "300 Kč / den",
-        zabava: "200 Kč / den",
-        bezpecnost: "Velmi bezpečné"
+    const priceData = {
+      prague: {
+        name: "Praha, Česko",
+        food: "250 Kč",
+        transport: "40 Kč",
+        hotel: "1200 Kč",
+        fun: "300 Kč"
       },
-      pariz: {
-        zeme: "Francie",
+      bangkok: {
+        name: "Bangkok, Thajsko",
+        food: "100 Kč",
+        transport: "25 Kč",
+        hotel: "700 Kč",
+        fun: "200 Kč"
+      },
+      lisbon: {
+        name: "Lisabon, Portugalsko",
+        food: "300 Kč",
+        transport: "45 Kč",
+        hotel: "1100 Kč",
+        fun: "350 Kč"
+      },
+      tokyo: {
+        name: "Tokio, Japonsko",
+        food: "400 Kč",
+        transport: "50 Kč",
+        hotel: "1800 Kč",
+        fun: "500 Kč"
+      },
+      newyork: {
+        name: "New York, USA",
+        food: "500 Kč",
+        transport: "65 Kč",
+        hotel: "2500 Kč",
+        fun: "600 Kč"
+      }
+    };
+
+    function showPrices() {
+      const city = document.getElementById("citySelect").value;
+      if (city && priceData[city]) {
+        document.getElementById("cityTitle").textContent = priceData[city].name;
+        document.getElementById("foodPrice").textContent = priceData[city].food;
+        document.getElementById("transportPrice").textContent = priceData[city].transport;
+        document.getElementById("hotelPrice").textContent = priceData[city].hotel;
+        document.getElementById("funPrice").textContent = priceData[city].fun;
+        document.getElementById("priceCard").style.display = "block";
+      } else {
+        document.getElementById("priceCard").style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
