@@ -2,89 +2,51 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8" />
-  <title>Cestovanilevne - Ceny podle místa</title>
+  <title>Cestovanilevne - Ceny měst světa</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; background: #f9f9f9; }
-    h1, h2 { color: #004080; }
-    select { font-size: 1.1em; padding: 5px; margin-bottom: 15px; }
-    .info-box { background: #d9e6f2; padding: 15px; border-radius: 8px; }
+    body { font-family: Arial, sans-serif; max-width: 1000px; margin: auto; padding: 20px; background: #f9f9f9; }
+    h1 { color: #004080; text-align: center; margin-bottom: 30px; }
+    table { width: 100%; }
   </style>
 </head>
 <body>
-  <h1>Cestovanilevne</h1>
-  <p>Vyberte místo a zobrazíme průměrné ceny.</p>
+  <h1>Cestovanilevne - Ceny měst světa</h1>
+  <table id="priceTable" class="display" style="width:100%">
+    <thead>
+      <tr>
+        <th>Země</th>
+        <th>Město</th>
+        <th>Doprava (Kč)</th>
+        <th>Ubytování (Kč / noc)</th>
+        <th>Jídlo (Kč / den)</th>
+        <th>Zábava (Kč / den)</th>
+        <th>Bezpečnost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Česká republika</td><td>Praha</td><td>500</td><td>900</td><td>300</td><td>200</td><td>Velmi bezpečné</td></tr>
+      <tr><td>Francie</td><td>Paříž</td><td>1500</td><td>2000</td><td>500</td><td>400</td><td>Bezpečné</td></tr>
+      <tr><td>Velká Británie</td><td>Londýn</td><td>1200</td><td>1800</td><td>450</td><td>350</td><td>Bezpečné</td></tr>
+      <tr><td>USA</td><td>New York</td><td>1700</td><td>2500</td><td>600</td><td>500</td><td>Střední riziko</td></tr>
+      <tr><td>Japonsko</td><td>Tokio</td><td>1000</td><td>1500</td><td>400</td><td>300</td><td>Velmi bezpečné</td></tr>
+      <tr><td>Itálie</td><td>Řím</td><td>1300</td><td>1600</td><td>350</td><td>250</td><td>Bezpečné</td></tr>
+      <tr><td>Španělsko</td><td>Barcelona</td><td>1100</td><td>1400</td><td>300</td><td>300</td><td>Bezpečné</td></tr>
+      <tr><td>Austrálie</td><td>Sydney</td><td>1800</td><td>2200</td><td>500</td><td>450</td><td>Velmi bezpečné</td></tr>
+      <tr><td>Čína</td><td>Šanghaj</td><td>900</td><td>1100</td><td>250</td><td>200</td><td>Střední riziko</td></tr>
+      <tr><td>Brazílie</td><td>Rio de Janeiro</td><td>1400</td><td>1500</td><td>400</td><td>350</td><td>Střední riziko</td></tr>
+      <!-- Přidej další města dle potřeby -->
+    </tbody>
+  </table>
 
-  <label for="placeSelect">Vyberte město nebo zemi:</label>
-  <select id="placeSelect">
-    <option value="">-- Vyberte --</option>
-    <option value="praha">Praha, Česká republika</option>
-    <option value="pariz">Paříž, Francie</option>
-    <option value="londyn">Londýn, Velká Británie</option>
-    <option value="newyork">New York, USA</option>
-    <option value="tokio">Tokio, Japonsko</option>
-  </select>
-
-  <div class="info-box" id="pricesInfo">
-    Vyberte místo pro zobrazení cen.
-  </div>
-
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script>
-    const pricesData = {
-      praha: {
-        doprava: "500 Kč",
-        ubytovani: "900 Kč / noc",
-        jidlo: "300 Kč / den",
-        zabava: "200 Kč / den",
-        bezpecnost: "Velmi bezpečné"
-      },
-      pariz: {
-        doprava: "1500 Kč",
-        ubytovani: "2000 Kč / noc",
-        jidlo: "500 Kč / den",
-        zabava: "400 Kč / den",
-        bezpecnost: "Bezpečné"
-      },
-      londyn: {
-        doprava: "1200 Kč",
-        ubytovani: "1800 Kč / noc",
-        jidlo: "450 Kč / den",
-        zabava: "350 Kč / den",
-        bezpecnost: "Bezpečné"
-      },
-      newyork: {
-        doprava: "1700 Kč",
-        ubytovani: "2500 Kč / noc",
-        jidlo: "600 Kč / den",
-        zabava: "500 Kč / den",
-        bezpecnost: "Střední riziko"
-      },
-      tokio: {
-        doprava: "1000 Kč",
-        ubytovani: "1500 Kč / noc",
-        jidlo: "400 Kč / den",
-        zabava: "300 Kč / den",
-        bezpecnost: "Velmi bezpečné"
-      }
-    };
-
-    const placeSelect = document.getElementById("placeSelect");
-    const pricesInfo = document.getElementById("pricesInfo");
-
-    placeSelect.addEventListener("change", () => {
-      const place = placeSelect.value;
-      if (!place) {
-        pricesInfo.textContent = "Vyberte místo pro zobrazení cen.";
-        return;
-      }
-      const data = pricesData[place];
-      pricesInfo.innerHTML = `
-        <p><strong>Doprava:</strong> ${data.doprava}</p>
-        <p><strong>Ubytování:</strong> ${data.ubytovani}</p>
-        <p><strong>Jídlo:</strong> ${data.jidlo}</p>
-        <p><strong>Zábava:</strong> ${data.zabava}</p>
-        <p><strong>Bezpečnost:</strong> ${data.bezpecnost}</p>
-      `;
-    });
-  </script>
-</body>
-</html>
+    $(document).ready(function() {
+      $('#priceTable').DataTable({
+        paging: true,
+        searching: true,
+        order: [[2, 'asc']], // Výchozí řazení podle dopravy (nejlevnější nahoře)
+        language: {
+          search: "Hledat:",
+          lengthMenu: "Zobrazit _MENU_ položek",
