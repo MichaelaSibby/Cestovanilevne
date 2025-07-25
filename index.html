@@ -2,96 +2,105 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8" />
-  <title>Cestovanilevne - Statistiky a Počasí</title>
+  <title>Cestovanilevne - Počasí podle země a města</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; background: #f0f8ff; }
     h1, h2 { color: #004080; }
     section { margin-bottom: 40px; }
-    canvas { background: #fff; border: 1px solid #ccc; padding: 10px; }
-    .weather-box, .info-box { background: #d9e6f2; padding: 15px; border-radius: 8px; }
+    .weather-box { background: #d9e6f2; padding: 15px; border-radius: 8px; }
+    select { font-size: 1.1em; padding: 5px; margin-right: 10px; }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <h1>Cestovanilevne</h1>
-  <p>Aktuální statistiky, počasí a tipy na levné cestování po světě.</p>
+  <p>Vyberte zemi a město pro zobrazení aktuálního počasí.</p>
 
-  <!-- Sekce počasí -->
   <section id="weather-section">
-    <h2>Aktuální počasí v Praze</h2>
+    <h2>Aktuální počasí</h2>
+    <label for="countrySelect">Země:</label>
+    <select id="countrySelect">
+      <option value="">-- Vyber zemi --</option>
+      <option value="cz">Česká republika</option>
+      <option value="us">USA</option>
+      <option value="gb">Velká Británie</option>
+      <option value="jp">Japonsko</option>
+      <option value="au">Austrálie</option>
+    </select>
+
+    <label for="citySelect">Město:</label>
+    <select id="citySelect" disabled>
+      <option value="">-- Nejprve vyber zemi --</option>
+    </select>
+
     <div class="weather-box" id="weather">
-      Načítám počasí...
+      Vyberte zemi a město pro zobrazení počasí.
     </div>
   </section>
 
-  <!-- Sekce grafu -->
-  <section id="stats-section">
-    <h2>Roční návštěvnost (příklad)</h2>
-    <canvas id="visitChart" width="800" height="400"></canvas>
-  </section>
+  <script>
+    const apiKey = "TVUJ_API_KLIC_ZDE";
+    const weatherDiv = document.getElementById("weather");
+    const countrySelect = document.getElementById("countrySelect");
+    const citySelect = document.getElementById("citySelect");
 
-  <!-- Sekce dalších informací -->
-  <section id="info-section">
-    <h2>Ceny a bezpečnost</h2>
-    <div class="info-box">
-      <p><strong>Doprava:</strong> 1000 Kč (průměrně)</p>
-      <p><strong>Ubytování:</strong> 800 Kč / noc</p>
-      <p><strong>Jídlo a zábava:</strong> 500 Kč / den</p>
-      <p><strong>Bezpečnost:</strong> Velmi bezpečné místo pro turisty.</p>
-    </div>
-  </section>
+    // Města podle zemí (přidej další podle potřeby)
+    const citiesByCountry = {
+      cz: ["Praha", "Brno", "Ostrava"],
+      us: ["New York", "Los Angeles", "Chicago"],
+      gb: ["London", "Manchester", "Edinburgh"],
+      jp: ["Tokyo", "Osaka", "Kyoto"],
+      au: ["Sydney", "Melbourne", "Brisbane"]
+    };
 
-<script>
-// -------------------
-// 1) Počasí - ukázka načtení z OpenWeatherMap API
-// Musíš si tam vytvořit zdarma API klíč: https://openweathermap.org/api
-// Následující kód je základ, uprav podle svého klíče a města
+    countrySelect.addEventListener("change", () => {
+      const country = countrySelect.value;
+      citySelect.innerHTML = "";
+      if (!country) {
+        citySelect.disabled = true;
+        citySelect.innerHTML = '<option value="">-- Nejprve vyber zemi --</option>';
+        weatherDiv.textContent = "Vyberte zemi a město pro zobrazení počasí.";
+        return;
+      }
+      citySelect.disabled = false;
+      const cities = citiesByCountry[country] || [];
+      cities.forEach(city => {
+        const option = document.createElement("option");
+        option.value = city;
+        option.textContent = city;
+        citySelect.appendChild(option);
+      });
+      weatherDiv.textContent = "Vyberte město pro zobrazení počasí.";
+    });
 
-const apiKey = "TVUJ_API_KLIC_ZDE";
-const city = "Prague";
-const weatherDiv = document.getElementById("weather");
+    citySelect.addEventListener("change", () => {
+      const city = citySelect.value;
+      if (!city) {
+        weatherDiv.textContent = "Vyberte město pro zobrazení počasí.";
+        return;
+      }
+      fetchWeather(city);
+    });
 
-fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=cz&appid=${apiKey}`)
-  .then(response => response.json())
-  .then(data => {
-    weatherDiv.innerHTML = `
-      <p><strong>Město:</strong> ${data.name}</p>
-      <p><strong>Teplota:</strong> ${data.main.temp} °C</p>
-      <p><strong>Počasí:</strong> ${data.weather[0].description}</p>
-      <p><strong>Vítr:</strong> ${data.wind.speed} m/s</p>
-    `;
-  })
-  .catch(() => {
-    weatherDiv.textContent = "Nepodařilo se načíst počasí.";
-  });
-
-// -------------------
-// 2) Graf návštěvnosti - pomocí Chart.js
-
-const ctx = document.getElementById('visitChart').getContext('2d');
-const visitChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'],
-        datasets: [{
-            label: 'Počet návštěvníků',
-            data: [120, 190, 300, 500, 200, 400, 350, 450, 300, 250, 200, 150],
-            borderColor: 'rgb(54, 162, 235)',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            fill: true,
-            tension: 0.3
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
+    function fetchWeather(city) {
+      weatherDiv.textContent = "Načítám počasí...";
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=cz&appid=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.cod !== 200) {
+            weatherDiv.textContent = "Počasí pro toto město nebylo nalezeno.";
+            return;
           }
-        }
+          weatherDiv.innerHTML = `
+            <p><strong>Město:</strong> ${data.name}</p>
+            <p><strong>Teplota:</strong> ${data.main.temp} °C</p>
+            <p><strong>Počasí:</strong> ${data.weather[0].description}</p>
+            <p><strong>Vítr:</strong> ${data.wind.speed} m/s</p>
+          `;
+        })
+        .catch(() => {
+          weatherDiv.textContent = "Nepodařilo se načíst počasí.";
+        });
     }
-});
-</script>
-
+  </script>
 </body>
 </html>
