@@ -2,105 +2,89 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8" />
-  <title>Cestovanilevne - Počasí podle země a města</title>
+  <title>Cestovanilevne - Ceny podle místa</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; background: #f0f8ff; }
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; background: #f9f9f9; }
     h1, h2 { color: #004080; }
-    section { margin-bottom: 40px; }
-    .weather-box { background: #d9e6f2; padding: 15px; border-radius: 8px; }
-    select { font-size: 1.1em; padding: 5px; margin-right: 10px; }
+    select { font-size: 1.1em; padding: 5px; margin-bottom: 15px; }
+    .info-box { background: #d9e6f2; padding: 15px; border-radius: 8px; }
   </style>
 </head>
 <body>
   <h1>Cestovanilevne</h1>
-  <p>Vyberte zemi a město pro zobrazení aktuálního počasí.</p>
+  <p>Vyberte místo a zobrazíme průměrné ceny.</p>
 
-  <section id="weather-section">
-    <h2>Aktuální počasí</h2>
-    <label for="countrySelect">Země:</label>
-    <select id="countrySelect">
-      <option value="">-- Vyber zemi --</option>
-      <option value="cz">Česká republika</option>
-      <option value="us">USA</option>
-      <option value="gb">Velká Británie</option>
-      <option value="jp">Japonsko</option>
-      <option value="au">Austrálie</option>
-    </select>
+  <label for="placeSelect">Vyberte město nebo zemi:</label>
+  <select id="placeSelect">
+    <option value="">-- Vyberte --</option>
+    <option value="praha">Praha, Česká republika</option>
+    <option value="pariz">Paříž, Francie</option>
+    <option value="londyn">Londýn, Velká Británie</option>
+    <option value="newyork">New York, USA</option>
+    <option value="tokio">Tokio, Japonsko</option>
+  </select>
 
-    <label for="citySelect">Město:</label>
-    <select id="citySelect" disabled>
-      <option value="">-- Nejprve vyber zemi --</option>
-    </select>
-
-    <div class="weather-box" id="weather">
-      Vyberte zemi a město pro zobrazení počasí.
-    </div>
-  </section>
+  <div class="info-box" id="pricesInfo">
+    Vyberte místo pro zobrazení cen.
+  </div>
 
   <script>
-    const apiKey = "TVUJ_API_KLIC_ZDE";
-    const weatherDiv = document.getElementById("weather");
-    const countrySelect = document.getElementById("countrySelect");
-    const citySelect = document.getElementById("citySelect");
-
-    // Města podle zemí (přidej další podle potřeby)
-    const citiesByCountry = {
-      cz: ["Praha", "Brno", "Ostrava"],
-      us: ["New York", "Los Angeles", "Chicago"],
-      gb: ["London", "Manchester", "Edinburgh"],
-      jp: ["Tokyo", "Osaka", "Kyoto"],
-      au: ["Sydney", "Melbourne", "Brisbane"]
+    const pricesData = {
+      praha: {
+        doprava: "500 Kč",
+        ubytovani: "900 Kč / noc",
+        jidlo: "300 Kč / den",
+        zabava: "200 Kč / den",
+        bezpecnost: "Velmi bezpečné"
+      },
+      pariz: {
+        doprava: "1500 Kč",
+        ubytovani: "2000 Kč / noc",
+        jidlo: "500 Kč / den",
+        zabava: "400 Kč / den",
+        bezpecnost: "Bezpečné"
+      },
+      londyn: {
+        doprava: "1200 Kč",
+        ubytovani: "1800 Kč / noc",
+        jidlo: "450 Kč / den",
+        zabava: "350 Kč / den",
+        bezpecnost: "Bezpečné"
+      },
+      newyork: {
+        doprava: "1700 Kč",
+        ubytovani: "2500 Kč / noc",
+        jidlo: "600 Kč / den",
+        zabava: "500 Kč / den",
+        bezpecnost: "Střední riziko"
+      },
+      tokio: {
+        doprava: "1000 Kč",
+        ubytovani: "1500 Kč / noc",
+        jidlo: "400 Kč / den",
+        zabava: "300 Kč / den",
+        bezpecnost: "Velmi bezpečné"
+      }
     };
 
-    countrySelect.addEventListener("change", () => {
-      const country = countrySelect.value;
-      citySelect.innerHTML = "";
-      if (!country) {
-        citySelect.disabled = true;
-        citySelect.innerHTML = '<option value="">-- Nejprve vyber zemi --</option>';
-        weatherDiv.textContent = "Vyberte zemi a město pro zobrazení počasí.";
+    const placeSelect = document.getElementById("placeSelect");
+    const pricesInfo = document.getElementById("pricesInfo");
+
+    placeSelect.addEventListener("change", () => {
+      const place = placeSelect.value;
+      if (!place) {
+        pricesInfo.textContent = "Vyberte místo pro zobrazení cen.";
         return;
       }
-      citySelect.disabled = false;
-      const cities = citiesByCountry[country] || [];
-      cities.forEach(city => {
-        const option = document.createElement("option");
-        option.value = city;
-        option.textContent = city;
-        citySelect.appendChild(option);
-      });
-      weatherDiv.textContent = "Vyberte město pro zobrazení počasí.";
+      const data = pricesData[place];
+      pricesInfo.innerHTML = `
+        <p><strong>Doprava:</strong> ${data.doprava}</p>
+        <p><strong>Ubytování:</strong> ${data.ubytovani}</p>
+        <p><strong>Jídlo:</strong> ${data.jidlo}</p>
+        <p><strong>Zábava:</strong> ${data.zabava}</p>
+        <p><strong>Bezpečnost:</strong> ${data.bezpecnost}</p>
+      `;
     });
-
-    citySelect.addEventListener("change", () => {
-      const city = citySelect.value;
-      if (!city) {
-        weatherDiv.textContent = "Vyberte město pro zobrazení počasí.";
-        return;
-      }
-      fetchWeather(city);
-    });
-
-    function fetchWeather(city) {
-      weatherDiv.textContent = "Načítám počasí...";
-      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=cz&appid=${apiKey}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.cod !== 200) {
-            weatherDiv.textContent = "Počasí pro toto město nebylo nalezeno.";
-            return;
-          }
-          weatherDiv.innerHTML = `
-            <p><strong>Město:</strong> ${data.name}</p>
-            <p><strong>Teplota:</strong> ${data.main.temp} °C</p>
-            <p><strong>Počasí:</strong> ${data.weather[0].description}</p>
-            <p><strong>Vítr:</strong> ${data.wind.speed} m/s</p>
-          `;
-        })
-        .catch(() => {
-          weatherDiv.textContent = "Nepodařilo se načíst počasí.";
-        });
-    }
   </script>
 </body>
 </html>
