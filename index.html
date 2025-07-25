@@ -1,104 +1,87 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cestovaní Levně</title>
+  <meta charset="UTF-8">
+  <title>Ceny cestování v Evropě</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
       background: #f0f0f0;
     }
-    select, button {
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 20px;
+    h1 {
+      text-align: center;
     }
-    .card {
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
       background: white;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #ccc;
-      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    select, button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    #result {
+      font-size: 18px;
+      text-align: center;
+      margin-top: 20px;
+      color: #006600;
     }
   </style>
 </head>
 <body>
-  <h1>Cestovaní Levně 🌍</h1>
-  <p>Vyber město a zjisti orientační ceny:</p>
-
-  <select id="citySelect">
-    <option value="">-- Vyber město --</option>
-    <option value="prague">Praha, Česko</option>
-    <option value="bangkok">Bangkok, Thajsko</option>
-    <option value="lisbon">Lisabon, Portugalsko</option>
-    <option value="tokyo">Tokio, Japonsko</option>
-    <option value="newyork">New York, USA</option>
-    <!-- sem můžeme přidat stovky dalších měst -->
-  </select>
-  <br>
-  <button onclick="showPrices()">Zobrazit ceny</button>
-
-  <div class="card" id="priceCard" style="display:none;">
-    <h2 id="cityTitle"></h2>
-    <p><strong>Jídlo (restaurace):</strong> <span id="foodPrice"></span></p>
-    <p><strong>Doprava (MHD/jízdenka):</strong> <span id="transportPrice"></span></p>
-    <p><strong>Ubytování (noc v hotelu):</strong> <span id="hotelPrice"></span></p>
-    <p><strong>Zábava:</strong> <span id="funPrice"></span></p>
+  <div class="container">
+    <h1>Kolik stojí den v evropských městech?</h1>
+    <label for="city">Vyber město:</label>
+    <select id="city">
+      <option value="Kyjev">Kyjev, Ukrajina</option>
+      <option value="Sofie">Sofie, Bulharsko</option>
+      <option value="Bělehrad">Bělehrad, Srbsko</option>
+      <option value="Bukurešť">Bukurešť, Rumunsko</option>
+      <option value="Varšava">Varšava, Polsko</option>
+      <option value="Lisabon">Lisabon, Portugalsko</option>
+      <option value="Praha">Praha, Česko</option>
+      <option value="Athény">Athény, Řecko</option>
+      <option value="Budapešť">Budapešť, Maďarsko</option>
+      <option value="Madrid">Madrid, Španělsko</option>
+      <option value="Amsterdam">Amsterdam, Nizozemsko</option>
+      <option value="Berlín">Berlín, Německo</option>
+      <option value="Paříž">Paříž, Francie</option>
+      <option value="Londýn">Londýn, Velká Británie</option>
+      <option value="Reykjavík">Reykjavík, Island</option>
+    </select>
+    <button onclick="showPrice()">Zobrazit cenu</button>
+    <div id="result"></div>
   </div>
 
   <script>
-    const priceData = {
-      prague: {
-        name: "Praha, Česko",
-        food: "250 Kč",
-        transport: "40 Kč",
-        hotel: "1200 Kč",
-        fun: "300 Kč"
-      },
-      bangkok: {
-        name: "Bangkok, Thajsko",
-        food: "100 Kč",
-        transport: "25 Kč",
-        hotel: "700 Kč",
-        fun: "200 Kč"
-      },
-      lisbon: {
-        name: "Lisabon, Portugalsko",
-        food: "300 Kč",
-        transport: "45 Kč",
-        hotel: "1100 Kč",
-        fun: "350 Kč"
-      },
-      tokyo: {
-        name: "Tokio, Japonsko",
-        food: "400 Kč",
-        transport: "50 Kč",
-        hotel: "1800 Kč",
-        fun: "500 Kč"
-      },
-      newyork: {
-        name: "New York, USA",
-        food: "500 Kč",
-        transport: "65 Kč",
-        hotel: "2500 Kč",
-        fun: "600 Kč"
-      }
+    const prices = {
+      "Kyjev": 35,
+      "Sofie": 45,
+      "Bělehrad": 50,
+      "Bukurešť": 55,
+      "Varšava": 60,
+      "Lisabon": 65,
+      "Praha": 70,
+      "Athény": 75,
+      "Budapešť": 78,
+      "Madrid": 85,
+      "Amsterdam": 100,
+      "Berlín": 110,
+      "Paříž": 125,
+      "Londýn": 140,
+      "Reykjavík": 160
     };
 
-    function showPrices() {
-      const city = document.getElementById("citySelect").value;
-      if (city && priceData[city]) {
-        document.getElementById("cityTitle").textContent = priceData[city].name;
-        document.getElementById("foodPrice").textContent = priceData[city].food;
-        document.getElementById("transportPrice").textContent = priceData[city].transport;
-        document.getElementById("hotelPrice").textContent = priceData[city].hotel;
-        document.getElementById("funPrice").textContent = priceData[city].fun;
-        document.getElementById("priceCard").style.display = "block";
-      } else {
-        document.getElementById("priceCard").style.display = "none";
-      }
+    function showPrice() {
+      const city = document.getElementById("city").value;
+      const price = prices[city];
+      document.getElementById("result").innerHTML = `Průměrná cena za den v <strong>${city}</strong> je <strong>${price} €</strong>.`;
     }
   </script>
 </body>
