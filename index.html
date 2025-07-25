@@ -1,11 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <title>Cestování levně</title>
+  <meta charset="UTF-8" />
+  <title>Cestovanilevne - Statistiky a Počasí</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; background: #f0f8ff; }
+    h1, h2 { color: #004080; }
+    section { margin-bottom: 40px; }
+    canvas { background: #fff; border: 1px solid #ccc; padding: 10px; }
+    .weather-box, .info-box { background: #d9e6f2; padding: 15px; border-radius: 8px; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>Vítej na stránce Cestovanilevne!</h1>
-  <p>Právě pro tebe připravuji statistiky počasí, ceny a tipy na levné cestování. Sleduj tento web!</p>
+  <h1>Cestovanilevne</h1>
+  <p>Aktuální statistiky, počasí a tipy na levné cestování po světě.</p>
+
+  <!-- Sekce počasí -->
+  <section id="weather-section">
+    <h2>Aktuální počasí v Praze</h2>
+    <div class="weather-box" id="weather">
+      Načítám počasí...
+    </div>
+  </section>
+
+  <!-- Sekce grafu -->
+  <section id="stats-section">
+    <h2>Roční návštěvnost (příklad)</h2>
+    <canvas id="visitChart" width="800" height="400"></canvas>
+  </section>
+
+  <!-- Sekce dalších informací -->
+  <section id="info-section">
+    <h2>Ceny a bezpečnost</h2>
+    <div class="info-box">
+      <p><strong>Doprava:</strong> 1000 Kč (průměrně)</p>
+      <p><strong>Ubytování:</strong> 800 Kč / noc</p>
+      <p><strong>Jídlo a zábava:</strong> 500 Kč / den</p>
+      <p><strong>Bezpečnost:</strong> Velmi bezpečné místo pro turisty.</p>
+    </div>
+  </section>
+
+<script>
+// -------------------
+// 1) Počasí - ukázka načtení z OpenWeatherMap API
+// Musíš si tam vytvořit zdarma API klíč: https://openweathermap.org/api
+// Následující kód je základ, uprav podle svého klíče a města
+
+const apiKey = "TVUJ_API_KLIC_ZDE";
+const city = "Prague";
+const weatherDiv = document.getElementById("weather");
+
+fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=cz&appid=${apiKey}`)
+  .then(response => response.json())
+  .then(data => {
+    weatherDiv.innerHTML = `
+      <p><strong>Město:</strong> ${data.name}</p>
+      <p><strong>Teplota:</strong> ${data.main.temp} °C</p>
+      <p><strong>Počasí:</strong> ${data.weather[0].description}</p>
+      <p><strong>Vítr:</strong> ${data.wind.speed} m/s</p>
+    `;
+  })
+  .catch(() => {
+    weatherDiv.textContent = "Nepodařilo se načíst počasí.";
+  });
+
+// -------------------
+// 2) Graf návštěvnosti - pomocí Chart.js
+
+const ctx = document.getElementById('visitChart').getContext('2d');
+const visitChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'],
+        datasets: [{
+            label: 'Počet návštěvníků',
+            data: [120, 190, 300, 500, 200, 400, 350, 450, 300, 250, 200, 150],
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+    }
+});
+</script>
+
 </body>
 </html>
